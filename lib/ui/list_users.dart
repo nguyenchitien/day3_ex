@@ -1,35 +1,43 @@
 import 'package:day03_ex/model/user_model.dart';
 import 'package:day03_ex/res/dimens.dart';
-import 'package:day03_ex/themes/style_text.dart';
 import 'package:day03_ex/ui/widgets/user_item.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ListUsers extends StatelessWidget {
-  final bool isLoading;
-  final List<User> users;
+  final Stream<List<User>> stream;
 
-  const ListUsers({Key key, this.users, this.isLoading})
-      : assert(isLoading != null),
+  const ListUsers({Key key, this.stream})
+      : assert(stream != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Text(
-            "List friends",
-            style: Theme.of(context).textTheme.headline1,
+    return StreamBuilder(
+      stream: stream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return _buildShimmerLoading();
+        }
+
+        final users = snapshot.data as List<User>;
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              Text(
+                "List friends",
+                style: Theme.of(context).textTheme.headline1,
+              ),
+              Gaps.vGap16,
+              _buildListUsers(users),
+            ],
           ),
-          Gaps.vGap16,
-          !isLoading ? _buildShimmerLoading() : _buildListUsers(),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildListUsers() {
+  Widget _buildListUsers(List<User> users) {
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -45,8 +53,6 @@ class ListUsers extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(Dimens.gap_dp16),
       child: Shimmer.fromColors(
-        // baseColor: Colors.grey[600],
-        // highlightColor: Colors.grey[700],
         baseColor: Colors.grey[300],
         highlightColor: Colors.grey[400],
         enabled: true,

@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:day03_ex/model/user_model.dart';
 import 'package:day03_ex/repository/repository.dart';
 import 'package:day03_ex/res/dimens.dart';
 import 'package:day03_ex/ui/list_users.dart';
 import 'package:flutter/material.dart';
+
+import '../model/user_model.dart';
 
 class HomePage extends StatefulWidget {
   final Function changeDarkThemeCallBack;
@@ -14,23 +18,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  StreamController<List<User>> streamController;
   List<User> users;
   bool isLoading = false;
-
-  void _fetchUsers() async {
-    users = await Repository().fetchUsers();
-
-    setState(() {
-      isLoading = true;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
+    streamController = StreamController();
 
     // fetch list users
     _fetchUsers();
+  }
+
+  @override
+  void dispose() {
+    streamController.close();
+
+    super.dispose();
   }
 
   @override
@@ -53,6 +58,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildContent() {
-    return ListUsers(isLoading: isLoading, users: users);
+    return ListUsers(
+      stream: streamController.stream,
+    );
+  }
+
+  void _fetchUsers() async {
+    users = await Repository().fetchUsers();
+
+    streamController.sink.add(users);
   }
 }

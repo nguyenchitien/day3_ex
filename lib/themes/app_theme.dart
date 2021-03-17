@@ -15,6 +15,10 @@ class AppTheme {
           subtitle1:
               ThemeTexts.textTheme.subtitle1.copyWith(color: Colors.black),
         ),
+        appBarTheme: AppBarTheme(
+            iconTheme: IconThemeData(
+          color: Colors.black,
+        )),
         cardColor: Colors.white,
       );
 
@@ -32,6 +36,10 @@ class AppTheme {
               ThemeTexts.textTheme.subtitle1.copyWith(color: Colors.white),
         ),
         cardColor: Color(0xFF242526),
+        appBarTheme: AppBarTheme(
+            iconTheme: IconThemeData(
+          color: Colors.white,
+        )),
       );
 
   static ThemeData getTheme(isDarkMode) {
